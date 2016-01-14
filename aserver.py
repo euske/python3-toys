@@ -40,8 +40,8 @@ class Session(asyncore.dispatcher):
 
     def process(self, data):
         print('%s: recv: %r' % (self.name, data))
-        return b'you said "%s"\r\n' % data.strip()
-
+        return b'you said '+data.strip()+b'\r\n'
+    
 class Server(asyncore.dispatcher):
 
     def __init__(self, host='', port=8000):
@@ -67,7 +67,7 @@ def main(argv):
     except getopt.GetoptError:
         return usage()
     host = ''
-    port = 8000
+    port = 1000
     debug = 0
     for (k, v) in opts:
         if k == '-d': debug += 1

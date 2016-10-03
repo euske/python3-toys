@@ -58,7 +58,7 @@ MORA_LIST = (
     Mora('ko', 'コ', '\uff7a', 'こ', 'ko'),
 
     Mora('sa', 'サ', '\uff7b', 'さ', 'sa'),
-    Mora('si', 'シ', '\uff7c', 'し', 'shi', '!si', '+sy'),
+    Mora('si', 'シ', '\uff7c', 'し', '!si', 'shi', '+si', '+sy'),
     Mora('su', 'ス', '\uff7d', 'す', 'su', '+s'),
     Mora('se', 'セ', '\uff7e', 'せ', 'se'),
     Mora('so', 'ソ', '\uff7f', 'そ', 'so'),
@@ -77,7 +77,7 @@ MORA_LIST = (
 
     Mora('ha', 'ハ', '\uff8a', 'は', 'ha'),
     Mora('hi', 'ヒ', '\uff8b', 'ひ', 'hi', '+hy'),
-    Mora('hu', 'フ', '\uff8c', 'ふ', 'hu', 'fu', '+f'),
+    Mora('hu', 'フ', '\uff8c', 'ふ', '!hu', 'fu', '+hu', '+f'),
     Mora('he', 'ヘ', '\uff8d', 'へ', 'he'),
     Mora('ho', 'ホ', '\uff8e', 'ほ', 'ho'),
 
@@ -119,7 +119,7 @@ MORA_LIST = (
     Mora('xO', 'ョ', '\uff6e', 'ょ', '!xyo', '!lyo'),
 
     # chouon
-    Mora('x-', 'ー', '\uff70', 'ー', 'h', '!-'),
+    Mora('x-', 'ー', '\uff70', 'ー', '!-', '+h'),
 
     # choked sound (Sokuon)
     Mora('.t', 'ッ', '\uff6f', 'っ', '!xtu', '!ltu',
@@ -134,14 +134,14 @@ MORA_LIST = (
     Mora('go', 'ゴ', '\uff7a\uff9e', 'ご', 'go'),
 
     Mora('za', 'ザ', '\uff7b\uff9e', 'ざ', 'za'),
-    Mora('zi', 'ジ', '\uff7c\uff9e', 'じ', 'ji', '!zi'),
+    Mora('zi', 'ジ', '\uff7c\uff9e', 'じ', '!zi', 'ji', '+zi'),
     Mora('zu', 'ズ', '\uff7d\uff9e', 'ず', 'zu', '+z'),
     Mora('ze', 'ゼ', '\uff7e\uff9e', 'ぜ', 'ze'),
     Mora('zo', 'ゾ', '\uff7f\uff9e', 'ぞ', 'zo'),
 
     Mora('da', 'ダ', '\uff80\uff9e', 'だ', 'da'),
-    Mora('di', 'ヂ', '\uff81\uff9e', 'ぢ', 'dzi', '!di'),
-    Mora('du', 'ヅ', '\uff82\uff9e', 'づ', 'dzu', '!du'),
+    Mora('di', 'ヂ', '\uff81\uff9e', 'ぢ', '!di', 'dzi'),
+    Mora('du', 'ヅ', '\uff82\uff9e', 'づ', '!du', 'dzu'),
     Mora('de', 'デ', '\uff83\uff9e', 'で', 'de'),
     Mora('do', 'ド', '\uff84\uff9e', 'ど', 'do', '+d'),
 
@@ -169,18 +169,18 @@ MORA_LIST = (
     Mora('kE', 'クェ', '\uff78\uff6a', 'くぇ', 'qe'),
     Mora('kO', 'クォ', '\uff78\uff6b', 'くぉ', 'qo'),
 
-    Mora('SA', 'シャ', '\uff7c\uff6c', 'しゃ', 'sya', 'sha'),
-    Mora('SU', 'シュ', '\uff7c\uff6d', 'しゅ', 'syu', 'shu', '+sh'),
-    Mora('SE', 'シェ', '\uff7c\uff6a', 'しぇ', 'sye', 'she'),
-    Mora('SO', 'ショ', '\uff7c\uff6e', 'しょ', 'syo', 'sho'),
+    Mora('SA', 'シャ', '\uff7c\uff6c', 'しゃ', '!sya', 'sha', '+sya'),
+    Mora('SU', 'シュ', '\uff7c\uff6d', 'しゅ', '!syu', 'shu', '+syu', '+sh'),
+    Mora('SE', 'シェ', '\uff7c\uff6a', 'しぇ', '!sye', 'she', '+sye'),
+    Mora('SO', 'ショ', '\uff7c\uff6e', 'しょ', '!syo', 'sho', '+syo'),
 
-    Mora('CA', 'チャ', '\uff81\uff6c', 'ちゃ', 'tya', 'cha', '!cya'),
-    Mora('CU', 'チュ', '\uff81\uff6d', 'ちゅ', 'tyu', 'chu', '!cyu'),
-    Mora('CE', 'チェ', '\uff81\uff6a', 'ちぇ', 'tye', 'che', '!cye'),
-    Mora('CO', 'チョ', '\uff81\uff6e', 'ちょ', 'tyo', 'cho', '!cyo'),
-    Mora('TI', 'ティ', '\uff83\uff68', 'てぃ', 'tyi', '+ti'),
-    Mora('TU', 'テュ', '\uff83\uff6d', 'てゅ', 'thu', '+tu'),
-    Mora('TO', 'トゥ', '\uff84\uff69', 'とぅ', 'tho', '+two'),
+    Mora('CA', 'チャ', '\uff81\uff6c', 'ちゃ', '!tya', '!cya', 'cha'),
+    Mora('CU', 'チュ', '\uff81\uff6d', 'ちゅ', '!tyu', '!cyu', 'chu'),
+    Mora('CE', 'チェ', '\uff81\uff6a', 'ちぇ', '!tye', '!cye', 'che'),
+    Mora('CO', 'チョ', '\uff81\uff6e', 'ちょ', '!tyo', '!cyo', 'cho'),
+    Mora('TI', 'ティ', '\uff83\uff68', 'てぃ', '!tyi', '+ti'),
+    Mora('TU', 'テュ', '\uff83\uff6d', 'てゅ', '!thu', '+tu'),
+    Mora('TO', 'トゥ', '\uff84\uff69', 'とぅ', '!tho', '+two'),
 
     Mora('NA', 'ニャ', '\uff86\uff6c', 'にゃ', 'nya'),
     Mora('NU', 'ニュ', '\uff86\uff6d', 'にゅ', 'nyu'),
@@ -350,41 +350,43 @@ class StringGenerator:
 class GeneratorOfficial(StringGenerator):
     
     def convert(self, m1, m2=None):
-        if isinstance(m2, Mora):
-            k = m2.roff[0]
-            if m1.mid == '.t':
-                return k[0] # double the consonant                
-            elif m1.mid == '.n':
-                if not m2.mid.startswith('.'):
-                    return 'n'  # NN+C -> "n"+C
+        if m1.mid == '.t':
+            if isinstance(m2, Mora):
+                k = m2.roff[0]
+                return k[0] # double the consonant
+            return 't'
+        elif m1.mid == '.n':
+            if not isinstance(m2, Mora) or m2.mid[0] not in '.ynN':
+                return 'n'  # NN+C -> "n"+C
         return m1.roff[0]
 
 class GeneratorOfficialAnna(StringGenerator):
     
     def convert(self, m1, m2=None):
-        if isinstance(m2, Mora):
-            k = m2.roff[0]
-            if m1.mid == '.t':
+        if m1.mid == '.t':
+            if isinstance(m2, Mora):
+                k = m2.roff[0]
                 return k[0] # double the consonant                
-            elif m1.mid == '.n':
+            return 't'
+        elif m1.mid == '.n':
+            if not isinstance(m2, Mora) or m2.mid[0] not in '.y':
                 return 'n'  # NN+C -> "n"+C
         return m1.roff[0]
 
 class GeneratorEnglish(StringGenerator):
     
     def convert(self, m1, m2=None):
-        if isinstance(m2, Mora):
-            k = m2.reng[0]
-            if m1.mid == '.t':
-                if k.startswith('c'):
-                    return 't'  # .t+"c" -> "tc"
-                else:
+        if m1.mid == '.t':
+            if isinstance(m2, Mora):
+                k = m2.reng[0]
+                if not k.startswith('c'):
                     return k[0] # double the consonant
-            elif m1.mid == '.n':
-                if k.startswith('p'):
-                    return 'm'  # NN+"p" -> "mp"
-                elif k[0] not in 'auieon':
-                    return 'n'  # NN+C -> "n"+C
+            return 't'
+        elif m1.mid == '.n':
+            if isinstance(m2, Mora) and m2.mid[0] in 'pP':
+                return 'm'  # NN+"p" -> "mp"
+            elif not isinstance(m2, Mora) or m2.mid[0] not in '.y':
+                return 'n'  # NN+C -> "n"+C
         return m1.reng[0]
 
 GEN_OFFICIAL = GeneratorOfficial()
@@ -499,16 +501,16 @@ if __name__ == '__main__':
 
         def test_10_gen_basic_official(self):
             self.checkGen(GEN_OFFICIAL,
-                          ['.a','ka','sa','ta','na'],
-                          'akasatana')
+                          ['.a','ka','sa','ta','na','.n'],
+                          'akasatanan')
         def test_11_gen_basic_official_anna(self):
             self.checkGen(GEN_OFFICIAL_ANNA,
-                          ['.a','ka','sa','ta','na'],
-                          'akasatana')
+                          ['.a','ka','sa','ta','na','.n'],
+                          'akasatanan')
         def test_12_gen_basic_english(self):
             self.checkGen(GEN_ENGLISH,
-                          ['.a','ka','sa','ta','na'],
-                          'akasatana')
+                          ['.a','ka','sa','ta','na','.n'],
+                          'akasatanan')
         def test_13_gen_official_ta(self):
             self.checkGen(GEN_OFFICIAL,
                           ['ta','ti','tu','te','to'],
@@ -520,15 +522,11 @@ if __name__ == '__main__':
         def test_15_gen_official_nn1(self):
             self.checkGen(GEN_OFFICIAL,
                           ['so','.n','.a',',','.a','.n','.a'],
-                          'sonna,anna')
+                          "son'a,an'a")
         def test_15_gen_official_nn2(self):
             self.checkGen(GEN_OFFICIAL,
                           ['so','.n','na',',','.a','.n','na'],
-                          'sonnna,annna')
-        def test_16_gen_official_nn_noreduce(self):
-            self.checkGen(GEN_OFFICIAL,
-                          ['so','.n','ka',',','.a','.n','ka'],
-                          'sonnka,annka')
+                          "son'na,an'na")
         def test_16_gen_official_nn_reduce(self):
             self.checkGen(GEN_OFFICIAL_ANNA,
                           ['so','.n','ka',',','.a','.n','ka'],
@@ -540,7 +538,7 @@ if __name__ == '__main__':
         def test_17_gen_official_anna_nn2(self):
             self.checkGen(GEN_OFFICIAL_ANNA,
                           ['so','.n','na',',','.a','.n','na'],
-                          "son'na,an'na")
+                          "sonna,anna")
         def test_18_gen_official_anna_nn_reduce(self):
             self.checkGen(GEN_OFFICIAL_ANNA,
                           ['so','.n','ka',',','.a','.n','ka'],
@@ -568,18 +566,18 @@ if __name__ == '__main__':
 
         def test_30_kana2official_basic1(self):
             self.checkKana2Official('ちょいとあんた,そんなこといってっけどさ',
-                                    'tyoitoannta,sonnnakotoittekkedosa')
+                                    "tyoitoanta,son'nakotoittekkedosa")
         def test_30_kana2official_basic2(self):
             self.checkKana2Official('にっちもさっちも.',
                                     'nittimosattimo.')
         def test_31_kana2official_mixed(self):
             self.checkKana2Official('ちょいとあんたソンナコトいってっけどサ.',
-                                    'tyoitoanntasonnnakotoittekkedosa.')
+                                    "tyoitoantason'nakotoittekkedosa.")
         def test_32_kana2official_ignore(self):
             self.checkKana2Official('ちょいとあんた○１２３０そんなこといってっけどさ.',
-                                    'tyoitoannta○１２３０sonnnakotoittekkedosa.')
+                                    "tyoitoanta○１２３０son'nakotoittekkedosa.")
         def test_33_official2kana_basic1(self):
-            self.checkOfficial2Kana('choitoanta,sonnnakotoittekkedosa',
+            self.checkOfficial2Kana("choitoanta,sonnnakotoittekkedosa",
                                     'チョイトアンタ,ソンナコトイッテッケドサ')
         def test_33_official2kana_basic2(self):
             self.checkOfficial2Kana('nitchimosatchimo.',

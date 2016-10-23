@@ -119,7 +119,7 @@ MORA_LIST = (
     Mora('xO', 'ョ', '\uff6e', 'ょ', '!xyo', '!lyo'),
 
     # chouon
-    Mora('x-', 'ー', '\uff70', 'ー', '!-', '+h'),
+    Mora('x-', 'ー', '\uff70', 'ー', '!x-', '+h'),
 
     # choked sound (Sokuon)
     Mora('.t', 'ッ', '\uff6f', 'っ', '!xtu', '!ltu',
@@ -225,8 +225,8 @@ MORA_LIST = (
     Mora('JE', 'ヂェ', '\uff81\uff9e\uff6a', 'ぢぇ', 'zhe'),
     Mora('JO', 'ヂョ', '\uff81\uff9e\uff6e', 'ぢょ', 'zho'),
 
-    Mora('dI', 'ディ', '\uff83\uff9e\uff68', 'でぃ', 'dyi', '+di'),
-    Mora('dU', 'デュ', '\uff83\uff9e\uff6d', 'でゅ', 'dyu', 'dhu', '+du'),
+    Mora('dI', 'ディ', '\uff83\uff9e\uff68', 'でぃ', '+di', 'dyi'),
+    Mora('dU', 'デュ', '\uff83\uff9e\uff6d', 'でゅ', '+du', 'dyu', 'dhu'),
     Mora('dO', 'ドゥ', '\uff84\uff9e\uff69', 'どぅ', 'dho'),
 
     Mora('BA', 'ビャ', '\uff8b\uff9e\uff6c', 'びゃ', 'bya'),

@@ -33,6 +33,13 @@ class Network:
         self.nodes.append(node)
         return node
     
+    def connect(self, src, dst, weight=0.5):
+        print('connect: %r -- %r' % (src, dst))
+        link = Link(src, dst, weight)
+        src.linkForw.append(link)
+        dst.linkBack.append(link)
+        return
+
     def reset(self):
         for node in self.nodes:
             node.reset()
@@ -44,24 +51,24 @@ class Network:
         print()
         return
 
-class Connection:
+class Link:
 
-    def __init__(self, node0, node1, weight):
-        self.node0 = node0
-        self.node1 = node1
+    def __init__(self, src, dst, weight):
+        self.src = src
+        self.dst = dst
         self.weight = weight
         return
 
     def __repr__(self):
-        return '%r--%r(%.3f)' % (self.node0, self.node1, self.weight)
+        return '%r-%r(%.3f)' % (self.src, self.dst, self.weight)
 
 class Node:
 
     def __init__(self, network, name):
         self.network = network
         self.name = name
-        self.cForw = {}
-        self.cBacj = {}
+        self.linkForw = []
+        self.linkBack = []
         return
 
     def __repr__(self):
@@ -69,32 +76,26 @@ class Node:
 
     def show(self):
         print('%r:' % self,
-              ', '.join( repr(c) for c in self.cForw.values() ))
-        return
-
-    def connect(self, node, weight=0.5):
-        print('connect: %r -- %r' % (self, node))
-        c = Connection(self, node, weight)
-        self.cForw[node] = c
-        node.cBacj[self] = c
+              ', '.join( repr(c) for c in self.linkForw ))
         return
 
     def reset(self):
-        self.vForw = {}
-        self.vBacj = {}
+        self.vForwNum = 0
+        self.vForwTotal = 0
+        self.vBackNum = 0
+        self.vBackTotal = 0
         self.output = self.gradient = None
         return
 
-    def recvForw(self, node0, value):
-        assert node0 in self.cBacj
-        assert node0 not in self.vBacj
-        self.vBacj[node0] = value
-        if len(self.vBacj) < len(self.cBacj): return
-        a = [ (self.cBacj[n], v) for (n,v) in self.vBacj.items() ]
-        x = sum( c.weight*v for (c,v) in a )
+    def recvForw(self, c, value):
+        assert c.dst is self
+        self.vBackNum += 1
+        self.vBackTotal += c.weight * value
+        if self.vBackNum < len(self.linkBack): return
+        x = self.vBackTotal
         if self.network.debug:
             print('forw: %r:' % self,
-                  ' + '.join( '%r%.3f*%.3f' % (c.node0,c.weight,v) for (c,v) in a ),
+                  ' + '.join( '%r%.3f*%.3f' % (c.src,c.weight,c.src.output) for c in self.linkBack ),
                   '= %.3f' % x)
         (self.output, self.gradient) = sigmoid(x)
         if self.network.debug:
@@ -104,20 +105,20 @@ class Node:
         return
 
     def feed(self, value):
-        for node1 in self.cForw.keys():
-            node1.recvForw(self, value)
+        self.output = value
+        for c in self.linkForw:
+            c.dst.recvForw(c, value)
         return
 
-    def recvBacj(self, node1, value):
-        assert node1 in self.cForw
-        assert node1 not in self.vForw
-        self.vForw[node1] = value
-        if len(self.vForw) < len(self.cForw): return
-        a = [ (self.cForw[n], v) for (n,v) in self.vForw.items() ]
-        error = sum( c.weight*v for (c,v) in a )
+    def recvBacj(self, c, value):
+        assert c.src is self
+        self.vForwNum += 1
+        self.vForwTotal += c.weight * value
+        if self.vForwNum < len(self.linkForw): return
+        error = self.vForwTotal
         if self.network.debug:
             print('bacj: %r:' % self,
-                  ' + '.join( '%r%.3f*%.3f' % (c.node1,c.weight,v) for (n,c,v) in a ),
+                  ' + '.join( '%r%.3f*%.3f' % (c.dst,c.weight,c.dst.output) for c in self.linkForw ),
                   '= %.3f' % error)
         self.update(error)
         return
@@ -129,17 +130,17 @@ class Node:
                   (self, error, self.gradient))
         error *= self.gradient
         alpha = self.network.rate
-        for (node0,c) in self.cBacj.items():
-            dw = alpha*error*self.vBacj[node0]
+        for c in self.linkBack:
+            dw = alpha*error*c.src.output
             if self.network.debug:
                 print('update: %r + %.3f -> %.3f' % (c, dw, c.weight+dw))
             c.weight += dw
-            node0.recvBacj(self, error)
+            c.src.recvBacj(c, error)
         return
 
 class InputNode(Node):
 
-    def recvBacj(self, node1, value):
+    def recvBacj(self, c, value):
         return
 
 class HiddenNode(Node):
@@ -151,7 +152,7 @@ class OutputNode(Node):
     def learn(self, value):
         assert self.output is not None
         error = value - self.output
-        print('*** error: %.3f ***' % error)
+        #print('*** error: %.3f ***' % error)
         self.update(error)
         return
 
@@ -162,13 +163,13 @@ n3 = N.addHidden('n3')
 n4 = N.addHidden('n4')
 n5 = N.addHidden('n5')
 n6 = N.addOutput('n6')
-n1.connect(n3)
-n1.connect(n4)
-n2.connect(n4)
-n2.connect(n5)
-n3.connect(n6)
-n4.connect(n6)
-n5.connect(n6)
+N.connect(n1, n3)
+N.connect(n1, n4)
+N.connect(n2, n4)
+N.connect(n2, n5)
+N.connect(n3, n6)
+N.connect(n4, n6)
+N.connect(n5, n6)
 
 for _ in range(1000):
     N.reset()
@@ -189,3 +190,23 @@ for _ in range(1000):
     n6.learn(0.0)
     
 N.show()
+
+N.reset()
+n1.feed(0.0)
+n2.feed(0.0)
+print(n6.output)
+
+N.reset()
+n1.feed(1.0)
+n2.feed(0.0)
+print(n6.output)
+
+N.reset()
+n1.feed(0.0)
+n2.feed(1.0)
+print(n6.output)
+
+N.reset()
+n1.feed(1.0)
+n2.feed(1.0)
+print(n6.output)

@@ -3,9 +3,9 @@ import sys
 from math import exp
 
 def sigmoid(x):
-    y = 1.0/(1.0+exp(-x))
-    dy = y*(1-y)
-    return (y, dy)
+    return 1.0/(1.0+exp(-x))
+def gradient(y):
+    return y*(1-y)
 
 class Network:
 
@@ -13,6 +13,7 @@ class Network:
         self.rate = rate
         self.debug = debug
         self.nodes = []
+        self.error = 0
         return
 
     def __repr__(self):
@@ -41,11 +42,13 @@ class Network:
         return
 
     def reset(self):
+        self.error = 0
         for node in self.nodes:
             node.reset()
         return
 
     def show(self):
+        print('** current error: %r' % self.error)
         for node in self.nodes:
             node.show()
         print()
@@ -87,60 +90,47 @@ class Node:
         self.output = self.gradient = None
         return
 
-    def recvForw(self, c, value):
-        assert c.dst is self
+    def feedForw(self, value):
         self.vBackNum += 1
-        self.vBackTotal += c.weight * value
+        self.vBackTotal += value
         if self.vBackNum < len(self.linkBack): return
-        x = self.vBackTotal
-        if self.network.debug:
-            print('forw: %r:' % self,
-                  ' + '.join( '%r%.3f*%.3f' % (c.src,c.weight,c.src.output) for c in self.linkBack ),
-                  '= %.3f' % x)
-        (self.output, self.gradient) = sigmoid(x)
-        if self.network.debug:
-            print('forw: %r: (output=%.3f, gradient=%.3f)' %
-                  (self, self.output, self.gradient))
-        self.feed(self.output)
+        output = sigmoid(self.vBackTotal)
+        self.send(output)
         return
 
-    def feed(self, value):
-        self.output = value
+    def send(self, output):
+        self.output = output
+        self.gradient = gradient(output)
         for c in self.linkForw:
-            c.dst.recvForw(c, value)
+            c.dst.feedForw(c.weight * output)
         return
 
-    def recvBacj(self, c, value):
-        assert c.src is self
-        self.vForwNum += 1
-        self.vForwTotal += c.weight * value
-        if self.vForwNum < len(self.linkForw): return
-        error = self.vForwTotal
-        if self.network.debug:
-            print('bacj: %r:' % self,
-                  ' + '.join( '%r%.3f*%.3f' % (c.dst,c.weight,c.dst.output) for c in self.linkForw ),
-                  '= %.3f' % error)
-        self.update(error)
-        return
-
-    def update(self, error):
-        assert self.gradient is not None
-        if self.network.debug:
-            print('update: %r: (error=%.3f, gradient=%.3f)' %
-                  (self, error, self.gradient))
-        error *= self.gradient
-        alpha = self.network.rate
+    def update(self, delta):
+        self.network.error += delta*delta
+        delta *= self.gradient
+        eta = self.network.rate * delta
         for c in self.linkBack:
-            dw = alpha*error*c.src.output
-            if self.network.debug:
-                print('update: %r + %.3f -> %.3f' % (c, dw, c.weight+dw))
+            dw = eta * c.src.output
             c.weight += dw
-            c.src.recvBacj(c, error)
+            c.src.feedBack(c.weight * delta)
+        return
+
+    def feedBack(self, value):
+        assert self.output
+        assert self.gradient
+        self.vForwNum += 1
+        self.vForwTotal += value
+        if self.vForwNum < len(self.linkForw): return
+        self.update(self.vForwTotal)
         return
 
 class InputNode(Node):
 
-    def recvBacj(self, c, value):
+    def feed(self, value):
+        self.send(value)
+        return
+
+    def feedBack(self, value):
         return
 
 class HiddenNode(Node):
@@ -152,8 +142,8 @@ class OutputNode(Node):
     def learn(self, value):
         assert self.output is not None
         error = value - self.output
-        #print('*** error: %.3f ***' % error)
-        self.update(error)
+        self.feedBack(error)
+        #print('*** error: %.3f ***' % self.network.error)
         return
 
 N = Network(2.0)

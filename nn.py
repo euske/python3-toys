@@ -72,6 +72,7 @@ class Node:
         self.name = name
         self.linkForw = []
         self.linkBack = []
+        self.bias = 0.1
         return
 
     def __repr__(self):
@@ -94,7 +95,7 @@ class Node:
         self.vBackNum += 1
         self.vBackTotal += value
         if self.vBackNum < len(self.linkBack): return
-        output = sigmoid(self.vBackTotal)
+        output = sigmoid(self.vBackTotal + self.bias)
         self.send(output)
         return
 

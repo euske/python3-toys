@@ -97,22 +97,20 @@ def make_script(s):
     # to the first occurrence of ";", "{", or "}".
     # Occurrences in quotation are skipped.
     # ("([^\\"]|\\.)*"|'([^\\']|\\.)*'|[^{};"'])*[{};]
-    pat1 = re.compile("(\"([^\\\\\"]|\\\\.)*\"|\'([^\\\\\']|\\\\.)*\'|[^{};\"\'])*[{};]")
-    pat2 = re.compile(r'^\s+')
+    pat = re.compile("(\"([^\\\\\"]|\\\\.)*\"|\'([^\\\\\']|\\\\.)*\'|[^{};\"\'])*[{};]")
     # current indentation.
     ind = 0
     lines = []
     def add(line):
+        line = line.strip()
         if line:
             lines.append('    '*ind + line)
         return
-    def rmsp(s):
-        return pat2.sub('', s)
     i = 0
     while i < len(s):
-        m = pat1.search(s, i)
+        m = pat.search(s, i)
         if not m:
-            add(rmsp(s[i:]))
+            add(s[i:])
             break
         e = m.end(0)
         if s[e-3:e] == 'EL{':
@@ -124,14 +122,14 @@ def make_script(s):
             add('F = s.split(DELIM)')
             add('I = [ toint(v) for v in F ]')
         elif s[e-1] == '{':
-            add(s[i:e-1])
+            add(s[i:e-1]+':')
             ind = ind + 1
         elif s[e-1] == '}':
+            add(s[i:e-1])
             ind = ind - 1
+            if ind < 0: raise SyntaxError('Invalid Syntax: '+s[i:])
         elif s[e-1] == ';':
             add(s[i:e-1])
-        else:
-            raise SyntaxError('invalid Syntax: '+g)
         i = e
     return lines
 

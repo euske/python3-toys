@@ -599,6 +599,42 @@ class Arrow(Line):
         return
 
 
+##  BarChart
+##
+class BarChart(SVGGroup):
+
+    def __init__(self, pts, width=None, height=None,
+                 barcolor='green', captionsize=10, marginratio=0.5,
+                 **attrs):
+        SVGGroup.__init__(self, [], **attrs)
+        width = attrs.pop('width', width)
+        height = attrs.pop('height', height)
+        barcolor = attrs.pop('barcolor', barcolor)
+        captionsize = attrs.pop('captionsize', captionsize)
+        texts = attrs.pop('texts', {})
+        pts = list(pts)
+        (x0,_,x1,y1) = getbounds(pts)
+        b = height - captionsize
+        w = width / ((x1-x0+1)*(1+marginratio)+marginratio)
+        m = w*marginratio
+        s = w*(1+marginratio)
+        g = Group(stroke='black', fill=barcolor)
+        for (x,y) in pts:
+            h = y*b/y1
+            g.add(Rect(int(m+(x-x0)*s), int(b-h), int(w), int(h)))
+        self.add(g)
+        if captionsize:
+            t = Group(stroke='none', fill='black', text_anchor='middle',
+                      style=('font-size: %dpx' % (captionsize*0.8)))
+            for (x,y) in pts:
+                c = texts.get(x, str(x))
+                t.add(Text(int(m+(x-x0)*s+w/2), height, c, dy='-0.3em'))
+            self.add(t)
+        self.add(Group([Line(0, 0, 0, b), Line(0, b, width, b)],
+                       stroke='black', fill='none', stroke_width=1))
+        return
+
+
 # run
 def run():
     svg = SVG(400,200)
@@ -610,15 +646,14 @@ def run():
     g.add(Text(-10,h-10,'0', stroke='none',fill='black',
                text_anchor='middle',dy='0.5em'))
     a = [5,9,4,0,7,3,1,8,6,2]
+    svg.add(BarChart(enumerate(a), 100, 100, transform='translate(10,10)'))
     dx = 10
     dy = 10
-    for (x,y) in enumerate(a):
-        g.add(Rect(x*dx,100-y*dy, dx,y*dy, fill='red'))
     g.add(Polyline([ (x*dx+dx/2,100-y*dy) for (x,y) in enumerate(a) ],
                      stroke='green'))
-    g.add(Text(w/2,10,'title', stroke='none',fill='black',
-               text_anchor='middle', style='font-size:16px'))
     svg.add(g)
+    svg.add(Text(svg.width//2,10,'title', stroke='none',fill='black',
+               text_anchor='middle', style='font-size:16px'))
     svg.dump()
 
 if __name__ == '__main__': run()

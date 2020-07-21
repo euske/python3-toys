@@ -14,18 +14,20 @@ def q(s):
 def main(argv):
     import getopt
     def usage():
-        print('usage: %s [-h] [-T title] [files ...]' % argv[0])
+        print('usage: %s [-h] [-c codec] [-T title] [files ...]' % argv[0])
         return 100
     try:
-        (opts, args) = getopt.getopt(argv[1:], 'hT:')
+        (opts, args) = getopt.getopt(argv[1:], 'hc:T:')
     except getopt.GetoptError:
         return usage()
     header = False
+    encoding = 'utf-8'
     title = ' '.join(args)
     for (k, v) in opts:
         if k == '-h': header = True
+        elif k == '-c': encoding = v
         elif k == '-T': title = v
-    fp = fileinput.input(args)
+    fp = fileinput.input(args, openhook=(lambda path, mode: open(path, mode, encoding=encoding)))
     print('<html><head><title>%s</title><style>' % q(title))
     print('table { border-collapse: collapse; }')
     print('</style></head><body><table border>')

@@ -284,9 +284,10 @@ class RTSPClient:
             f'pt={pt}, seqno={seqno}, '
             f'rts={rts}, ssrc={ssrc}')
         if self._rtp_seqno != seqno:
+            # Packet drop detected. Cancelling the current payload.
             self.logger.info(f'process_rtp: DROP')
             self._rtp_pays = None
-        # Append to the payload.
+        # Append to the payload (if it's not cancelled).
         if self._rtp_pays is not None:
             cc = flags & 0x0f
             self._rtp_pays.append(data[12+cc*4:])

@@ -315,10 +315,10 @@ class RTSPClient:
             f'pt={pt}, length={length}, ssrc={ssrc}')
         assert pt == 200 # RTCP
         # Conver the NTP timestamp to UTC.
-        (ntpmsw, ntplsw, timestamp) = struct.unpack('>LLL', data[8:20])
+        (ntpmsw, ntplsw, rts) = struct.unpack('>LLL', data[8:20])
         fraction = ntplsw / (1<<32)
         self._last_ntp = datetime.fromtimestamp(ntpmsw + NTP2POSIX + fraction)
-        self._last_rts = timestamp
+        self._last_rts = rts
         self.logger.debug(
             f'process_rtcp: sync: '
             f'last_ntp={self._last_ntp}, last_rts={self._last_rts}')

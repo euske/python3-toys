@@ -4,7 +4,7 @@
 # detcheat.py - cheat detector for Python codes.
 #
 # Usage:
-#   $ detcheat.py *.py
+#   $ python detcheat.py *.py
 #
 # Options:
 #   -d: debug mode.
@@ -28,7 +28,7 @@ def kgrams(seq, k=5):
 
 def winnow(seq, k=5):
     kgram = kgrams(seq, k)
-    hashes = [ hash(''.join(x)) for x in kgram ]
+    hashes = [ ''.join(x) for x in kgram ]
     windows = kgrams(hashes, 4)
     s = {}
     for (i,window) in enumerate(windows):
@@ -114,7 +114,8 @@ class SimDB:
         for (i,(key0,ws0)) in enumerate(self.results):
             for (key1,ws1) in self.results[i+1:]:
                 c = common(ws0, ws1)
-                ratio = c/max(len(ws0), len(ws1))
+                # Dice coefficienct.
+                ratio = 2*c/(len(ws0)+len(ws1))
                 a.append((ratio, key0, key1))
         a.sort(key=lambda x:x[0], reverse=True)
         if n == 0:

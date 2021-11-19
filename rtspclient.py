@@ -217,7 +217,13 @@ class RTSPClient:
         self.sock_rtsp.send(buf)
         resp = self.sock_rtsp.recv(self.BUFSIZ)
         self.logger.debug(f'recv: {resp}')
-        return resp.decode('ascii').splitlines()
+        lines = resp.decode('ascii').splitlines()
+        status = lines[0]
+        attrs = {}
+        for line in lines[1:]:
+            (k,_,v) = line.partition(':')
+            attrs[k.strip().lower()] = v.lstrip()
+        return (status, attrs)
 
     # setup: send a SETUP request to the server.
     def setup(self):
@@ -225,18 +231,22 @@ class RTSPClient:
             f'SETUP {self.url} RTSP/1.0',
             f'Transport: RTP/AVP;unicast;client_port={self.lport_rtp}-{self.lport_rtcp}'
         )
-        for line in self.send_req(req):
-            if line.startswith('Session:'):
-                (_,_,session) = line.partition(' ')
-                (self.session_key,_,_) = session.partition(';')
-            elif line.startswith('Transport:'):
-                (_,_,transport) = line.partition(' ')
-                for v in transport.split(';'):
-                    if v.startswith('server_port='):
-                        (_,_,prange) = v.partition('=')
-                        (p0,_,p1) = prange.partition('-')
-                        self.rport_rtp = int(p0)
-                        self.rport_rtcp = int(p1)
+        (status, attrs) = self.send_req(req)
+        if not status.startswith('RTSP/1.0 200'):
+            raise OSError(status)
+        if 'session' not in attrs:
+            raise OSError('no session')
+        session = attrs['session']
+        (self.session_key,_,_) = session.partition(';')
+        if 'transport' not in attrs:
+            raise OSError('no transport')
+        transport = attrs['transport']
+        for v in transport.split(';'):
+            if v.startswith('server_port='):
+                (_,_,prange) = v.partition('=')
+                (p0,_,p1) = prange.partition('-')
+                self.rport_rtp = int(p0)
+                self.rport_rtcp = int(p1)
         self.logger.info(
             f'SETUP: session_key={self.session_key}, '
             f'port_rtp={self.rport_rtp}, '
@@ -250,7 +260,9 @@ class RTSPClient:
             f'Session: {self.session_key}',
             'Range: npt=0-'
         )
-        self.send_req(req)
+        (status, attrs) = self.send_req(req)
+        if not status.startswith('RTSP/1.0 200'):
+            raise OSError(status)
         self.logger.info(f'PLAY')
         return
 
@@ -315,10 +327,10 @@ class RTSPClient:
             f'pt={pt}, length={length}, ssrc={ssrc}')
         assert pt == 200 # RTCP
         # Conver the NTP timestamp to UTC.
-        (ntpmsw, ntplsw, timestamp) = struct.unpack('>LLL', data[8:20])
+        (ntpmsw, ntplsw, rts) = struct.unpack('>LLL', data[8:20])
         fraction = ntplsw / (1<<32)
         self._last_ntp = datetime.fromtimestamp(ntpmsw + NTP2POSIX + fraction)
-        self._last_rts = timestamp
+        self._last_rts = rts
         self.logger.debug(
             f'process_rtcp: sync: '
             f'last_ntp={self._last_ntp}, last_rts={self._last_rts}')

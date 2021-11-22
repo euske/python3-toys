@@ -51,7 +51,7 @@ def main(argv):
             cols = ( f'<th>{q(col)}</th>' for col in sel(row, selection) )
             header = False
         else:
-            cols = ( f'<td>{q(col)}</td>' for col in sel(row, selection) )
+            cols = ( f'<td class=c{i}>{q(col)}</td>' for (i,col) in enumerate(sel(row, selection)) )
         print(f'<tr>{"".join(cols)}</tr>')
     print('</table></body></html>')
     return 0

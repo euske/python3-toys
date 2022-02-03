@@ -316,7 +316,7 @@ class RTSPClient:
                 frame = depay_jpeg(self._rtp_pays)
                 self.process_rtp_frame(timestamp, frame)
             self._rtp_pays = []
-        self._rtp_seqno = seqno+1
+        self._rtp_seqno = (seqno+1) % 65536
         return
 
     # process_rtcp: process RTCP SR packet.
